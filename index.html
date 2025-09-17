@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giveaway Panel</title>
+<style>
+  body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+  input, button { padding: 10px; margin: 5px; width: 100%; max-width: 400px; }
+</style>
+</head>
+<body>
+<h2>🎉 Create Giveaway</h2>
+<input type="text" id="title" placeholder="Title" />
+<input type="text" id="prize" placeholder="Prize" />
+<input type="number" id="duration" placeholder="Duration (seconds)" />
+<input type="number" id="winners" placeholder="Number of Winners" />
+<button onclick="createGiveaway()">Create Giveaway</button>
+<p id="status"></p>
+
+<script>
+async function createGiveaway() {
+  const title = document.getElementById("title").value;
+  const prize = document.getElementById("prize").value;
+  const duration = parseInt(document.getElementById("duration").value);
+  const winners = parseInt(document.getElementById("winners").value);
+
+  const status = document.getElementById("status");
+  status.innerText = "Posting giveaway...";
+
+  const response = await fetch("https://YOUR_BACKEND_URL_HERE/create-giveaway", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, prize, duration, winners })
+  });
+  const data = await response.json();
+  if(data.status==="success"){
+    status.innerText = "✅ Giveaway posted successfully!";
+  } else {
+    status.innerText = "❌ Error: "+data.msg;
+  }
+}
+</script>
+</body>
+</html>
