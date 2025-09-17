@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giveaway Panel</title>
+<style>
+  body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+  input, button { padding: 10px; margin: 5px; width: 100%; max-width: 400px; }
+  .duration-group { display: flex; gap: 5px; }
+  .duration-group input { flex: 1; }
+</style>
+</head>
+<body>
+<h2>🎉 Create Giveaway</h2>
+<input type="text" id="title" placeholder="Title" />
+<input type="text" id="prize" placeholder="Prize" />
+
+<h3>⏰ Duration</h3>
+<div class="duration-group">
+  <input type="number" id="days" placeholder="Days" min="0" value="0" />
+  <input type="number" id="hours" placeholder="Hours" min="0" max="23" value="0" />
+  <input type="number" id="minutes" placeholder="Minutes" min="0" max="59" value="0" />
+  <input type="number" id="seconds" placeholder="Seconds" min="0" max="59" value="0" />
+</div>
+
+<input type="number" id="winners" placeholder="Number of Winners" min="1" />
+<button onclick="createGiveaway()">Create Giveaway</button>
+<p id="status"></p>
+
+<script>
+async function createGiveaway() {
+  const title = document.getElementById("title").value;
+  const prize = document.getElementById("prize").value;
+  const winners = parseInt(document.getElementById("winners").value);
+
+  // Calculate total duration in seconds
+  const days = parseInt(document.getElementById("days").value) || 0;
+  const hours = parseInt(document.getElementById("hours").value) || 0;
+  const minutes = parseInt(document.getElementById("minutes").value) || 0;
+  const seconds = parseInt(document.getElementById("seconds").value) || 0;
+
+  const duration = (days*86400) + (hours*3600) + (minutes*60) + seconds;
+
+  if(!title || !prize || !duration || !winners){
+    document.getElementById("status").innerText = "❌ Please fill all fields correctly!";
+    return;
+  }
+
+  const status = document.getElementById("status");
+  status.innerText = "Posting giveaway...";
+
+  const response = await fetch("https://YOUR_BACKEND_URL_HERE/create-giveaway", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, prize, duration, winners })
+  });
+
+  const data = await response.json();
+  if(data.status==="success"){
+    status.innerText = "✅ Giveaway posted successfully!";
+  } else {
+    status.innerText = "❌ Error: " + data.msg;
+  }
+}
+</script>
+</body>
+</html>
